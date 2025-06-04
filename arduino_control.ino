@@ -69,14 +69,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
   StaticJsonDocument<1024> msgDoc;
   Serial.println("🔔 MQTT 메시지 수신됨!");
 
-  String message;
-  for (unsigned int i = 0; i < length; i++) {
-    message += (char)payload[i];
-  }
+  char buffer[256];  // 수신 메시지 버퍼
+  memcpy(buffer, payload, length);
+  buffer[length] = '\0';  // null-termination
 
-  Serial.println("📦 수신된 메시지: " + message);
+  Serial.println("📦 수신된 메시지: ");
+  Serial.println(buffer);
 
-  DeserializationError error = deserializeJson(msgDoc, message);
+  DeserializationError error = deserializeJson(msgDoc, buffer);
   if (error) {
     Serial.print("❌ JSON 파싱 실패: ");
     Serial.println(error.c_str());
@@ -91,7 +91,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if (!curtain_power) {
       openCurtain();
       curtain_power = 1;
-    } else if (curtain_power) {
+    } else if (curtain_power) { 
       closeCurtain();
       curtain_power = 0;
     } else {
@@ -111,7 +111,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     return;
   }
 
-  uint16_t raw[128];
+  uint16_t raw[70];
   size_t size = codeArray.size();
   for (int i = 0; i < size; i++) {
     raw[i] = codeArray[i];
