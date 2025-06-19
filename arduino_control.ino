@@ -100,11 +100,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
     return;
   }
 
-  if (!irCodesDoc.containsKey(mode) || !irCodesDoc[mode].containsKey(control)) {
-    Serial.println("❌ 해당 mode/control에 대한 IR 코드 없음");
-    return;
-  }
-
   JsonArray codeArray = irCodesDoc[mode][control]["code"].as<JsonArray>();
   if (codeArray.isNull() || codeArray.size() == 0) {
     Serial.println("❌ code 배열 비어 있음");
